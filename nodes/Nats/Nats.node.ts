@@ -51,13 +51,6 @@ export class Nats implements INodeType {
 				description: 'Whether to send the the data the node receives as JSON to Kafka',
 			},
 			{
-				displayName: 'Only Emit',
-				name: 'onlyEmit',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to send the data to Nats without waiting for a response',
-			},
-			{
 				displayName: 'Message',
 				name: 'message',
 				type: 'string',
@@ -130,18 +123,11 @@ export class Nats implements INodeType {
 				placeholder: 'Add Option',
 				options: [
 					{
-						displayName: 'Acks',
-						name: 'acks',
+						displayName: 'Only Emit',
+						name: 'onlyEmit',
 						type: 'boolean',
 						default: false,
-						description: 'Whether or not producer must wait for acknowledgement from all replicas',
-					},
-					{
-						displayName: 'Compression',
-						name: 'compression',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to send the data in a compressed format using the GZIP codec',
+						description: 'Whether to send the data to Nats without waiting for a response',
 					},
 				],
 			},
@@ -155,7 +141,6 @@ export class Nats implements INodeType {
 		const subscriptionsPromise: Array<Promise<unknown>> = [];
 
 		try {
-			const options = this.getNodeParameter('options', 0) as IDataObject;
 			const sendInputData = this.getNodeParameter('sendInputData', 0) as boolean;
 
 			const credentials = await this.getCredentials('natsApi');
@@ -198,7 +183,7 @@ export class Nats implements INodeType {
 			for (let i = 0; i < items.length; i++) {
 				const subject = this.getNodeParameter('subject', i) as string;
 				const jsonParameters = this.getNodeParameter('jsonParameters', i) as boolean;
-				const onlyEmit = this.getNodeParameter('onlyEmit', i) as boolean;
+				const options = this.getNodeParameter('options', i) as IDataObject;
 
 				const message: IDataObject = {
 					id: uuid(),
@@ -238,7 +223,7 @@ export class Nats implements INodeType {
 					}
 				}
 
-				if(onlyEmit) {
+				if(options.onlyEmit) {
 					natsClient.publish(subject, jsonCodec.encode(message), {
 						headers: msgHdrs,
 					});
@@ -252,7 +237,7 @@ export class Nats implements INodeType {
 
 				const subscription = natsClient.subscribe(inbox, {
 					queue,
-					timeout: options.sessionTimeout as number,
+					timeout: credentials.sessionTimeout as number,
 				});
 
 				subscription.closed.then(() => {
