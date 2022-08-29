@@ -51,6 +51,13 @@ export class Nats implements INodeType {
 				description: 'Whether to send the the data the node receives as JSON to Kafka',
 			},
 			{
+				displayName: 'Only Emit',
+				name: 'onlyEmit',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to send the data to Nats without waiting for a response',
+			},
+			{
 				displayName: 'Message',
 				name: 'message',
 				type: 'string',
@@ -65,12 +72,6 @@ export class Nats implements INodeType {
 			{
 				displayName: 'JSON Parameters',
 				name: 'jsonParameters',
-				type: 'boolean',
-				default: false,
-			},
-			{
-				displayName: 'Only Emit',
-				name: 'onlyEmit',
 				type: 'boolean',
 				default: false,
 			},
