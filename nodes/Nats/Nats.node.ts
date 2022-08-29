@@ -69,6 +69,12 @@ export class Nats implements INodeType {
 				default: false,
 			},
 			{
+				displayName: 'Only Emit',
+				name: 'onlyEmit',
+				type: 'boolean',
+				default: false,
+			},
+			{
 				displayName: 'Headers',
 				name: 'headersUi',
 				placeholder: 'Add Header',
@@ -191,6 +197,7 @@ export class Nats implements INodeType {
 			for (let i = 0; i < items.length; i++) {
 				const subject = this.getNodeParameter('subject', i) as string;
 				const jsonParameters = this.getNodeParameter('jsonParameters', i) as boolean;
+				const onlyEmit = this.getNodeParameter('onlyEmit', i) as boolean;
 
 				const message: IDataObject = {
 					id: uuid(),
@@ -228,6 +235,16 @@ export class Nats implements INodeType {
 					if (!msgHdrs.has(key)) {
 						msgHdrs.set(key, value as string);
 					}
+				}
+
+				if(onlyEmit) {
+					natsClient.publish(subject, jsonCodec.encode(message), {
+						headers: msgHdrs,
+					});
+
+					return [this.helpers.returnJsonArray({
+						success: true,
+					})];
 				}
 
 				const inbox = createInbox();
