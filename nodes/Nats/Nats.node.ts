@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { connect, ConnectionOptions, createInbox, headers, JSONCodec, Msg } from 'nats';
+import { connect, ConnectionOptions, createInbox, headers, JSONCodec, NatsConnection } from 'nats';
 
 import { IExecuteFunctions } from 'n8n-core';
 
@@ -7,7 +7,9 @@ import {
 	IDataObject,
 	INodeExecutionData,
 	INodeType,
-	INodeTypeDescription, JsonObject, NodeApiError,
+	INodeTypeDescription,
+	JsonObject,
+	NodeApiError,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -136,54 +138,63 @@ export class Nats implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
+		const jsonCodec = JSONCodec<IDataObject>();
+		const sendInputData = this.getNodeParameter('sendInputData', 0) as boolean;
+		const credentials = await this.getCredentials('natsApi') as {
+			servers: string,
+			queue: string,
+			timeout: number,
+			authentication?: boolean,
+			username?: string,
+			password?: string,
+		};
+		const servers = credentials.servers
+			.split(',')
+			.filter(Boolean)
+			.map((item) => item.trim());
+
+		const queue = credentials.queue;
 
 		const responseData: IDataObject[] = [];
 		const subscriptionsPromise: Array<Promise<unknown>> = [];
 
-		try {
-			const sendInputData = this.getNodeParameter('sendInputData', 0) as boolean;
+		const connectionOptions: ConnectionOptions = {
+			reconnect: true,
+			timeout: credentials.timeout,
+			waitOnFirstConnect: true,
+			servers,
+		};
 
-			const credentials = await this.getCredentials('natsApi');
-
-			const servers = ((credentials.servers as string) || '')
-				.split(',')
-				.filter(Boolean)
-				.map((item) => item.trim()) as string[];
-
-			const queue = credentials.queue as string;
-
-			const connectionOptions: ConnectionOptions = {
-				name: queue,
-				servers,
-			};
-
-			if (credentials.authentication === true) {
-				if (!(credentials.username && credentials.password)) {
-					throw new NodeOperationError(
-						this.getNode(),
-						'Username and password are required for authentication',
-					);
-				}
-				connectionOptions.user = credentials.username as string;
-				connectionOptions.pass = credentials.password as string;
+		if (credentials.authentication) {
+			if (!(credentials.username && credentials.password)) {
+				throw new NodeOperationError(
+					this.getNode(),
+					'Username and password are required for authentication',
+				);
 			}
+			connectionOptions.user = credentials.username;
+			connectionOptions.pass = credentials.password;
+		}
 
+		try {
 			const natsClient = await connect(connectionOptions);
+			console.log(`connected to ${natsClient.getServer()}`);
 
 			natsClient.closed()
 				.then((err) => {
 					if (err) {
 						console.error(
-							`service ${queue} exited because of error: ${err.message}`,
+							`service ${queue} exited because of error: ${err}`,
 						);
 					}
 				});
-			const jsonCodec = JSONCodec<IDataObject>();
 
 			for (let i = 0; i < items.length; i++) {
 				const subject = this.getNodeParameter('subject', i) as string;
 				const jsonParameters = this.getNodeParameter('jsonParameters', i) as boolean;
-				const options = this.getNodeParameter('options', i) as IDataObject;
+				const options = this.getNodeParameter('options', i) as {
+					onlyEmit: boolean,
+				};
 
 				const message: IDataObject = {
 					id: uuid(),
@@ -228,6 +239,9 @@ export class Nats implements INodeType {
 						headers: msgHdrs,
 					});
 
+				  await	natsClient.drain();
+					await natsClient.close();
+
 					return [this.helpers.returnJsonArray({
 						success: true,
 					})];
@@ -237,7 +251,7 @@ export class Nats implements INodeType {
 
 				const subscription = natsClient.subscribe(inbox, {
 					queue,
-					timeout: credentials.sessionTimeout as number,
+					timeout: credentials.timeout,
 				});
 
 				subscription.closed.then(() => {
@@ -249,22 +263,9 @@ export class Nats implements INodeType {
 				const startListener = async () => {
 					for await (const msg of subscription) {
 						const dataObject: IDataObject = {};
+						dataObject.data = jsonCodec.decode(msg.data);
 
-						// if (options.jsonParseMessage) {
-						// 	try {
-						// 		value = JSON.parse(value);
-						// 	} catch (error) {}
-						// }
-						const value = jsonCodec.decode(msg.data);
-
-						// if (options.onlyMessage) {
-						// 	//@ts-ignore
-						// 	data = value;
-						// } else {
-						dataObject.data = value;
-						// }
-
-						console.log(`[${subscription.getProcessed()}]: ${dataObject}`);
+						console.log(`[${subscription.getProcessed()}]: ${JSON.stringify(dataObject)}`);
 
 						subscription.unsubscribe();
 						return dataObject;
@@ -274,6 +275,7 @@ export class Nats implements INodeType {
 				};
 
 				subscriptionsPromise.push(startListener());
+
 
 				natsClient.publish(subject, jsonCodec.encode(message), {
 					reply: inbox,

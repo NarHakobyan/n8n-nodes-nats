@@ -1,12 +1,6 @@
 import { ITriggerFunctions } from 'n8n-core';
 
-import {
-	IDataObject,
-	INodeType,
-	INodeTypeDescription,
-	ITriggerResponse,
-	NodeOperationError,
-} from 'n8n-workflow';
+import { IDataObject, INodeType, INodeTypeDescription, ITriggerResponse, NodeOperationError } from 'n8n-workflow';
 import { connect, ConnectionOptions, JSONCodec } from 'nats';
 
 export class NatsTrigger implements INodeType {
@@ -80,7 +74,7 @@ export class NatsTrigger implements INodeType {
 
 		const natsClient = await connect(connectionOptions);
 
-		const options = this.getNodeParameter('options', {}) as IDataObject;
+		// const options = this.getNodeParameter('options', {}) as IDataObject;
 
 
 		const subscription = natsClient.subscribe(subject, {
@@ -92,23 +86,7 @@ export class NatsTrigger implements INodeType {
 
 		const startListener = async () => {
 			for await (const msg of subscription) {
-				const dataObject: IDataObject = {};
-
-				console.log(msg.data);
-				// if (options.jsonParseMessage) {
-				// 	try {
-				// 		value = JSON.parse(value);
-				// 	} catch (error) {}
-				// }
-				const value = jsonCodec.decode(msg.data);
-
-				// if (options.onlyMessage) {
-				// 	//@ts-ignore
-				// 	data = value;
-				// } else {
-				dataObject.message = value;
-				dataObject.subject = subject;
-			// }
+				 const dataObject = jsonCodec.decode(msg.data);
 
 				console.log(`[${subscription.getProcessed()}]: ${dataObject}`);
 
