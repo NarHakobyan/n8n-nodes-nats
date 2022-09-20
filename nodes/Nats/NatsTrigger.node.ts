@@ -47,23 +47,6 @@ export class NatsTrigger implements INodeType {
 				placeholder: 'n8n_queue',
 				description: 'Queue name',
 			},
-			{
-				displayName: 'Options',
-				name: 'options',
-				type: 'collection',
-				default: {},
-				placeholder: 'Add Option',
-				options: [
-					{
-						displayName: 'Session Timeout',
-						name: 'sessionTimeout',
-						type: 'number',
-						default: 30000,
-						description: 'The time to await a response in ms',
-						hint: 'Value in milliseconds',
-					},
-				],
-			},
 		],
 	};
 
@@ -77,7 +60,7 @@ export class NatsTrigger implements INodeType {
 		const servers = ((credentials.servers as string) || '')
 			.split(',')
 			.filter(Boolean)
-			.map((item) => item.trim()) as string[];
+			.map((item) => item.trim());
 
 		const connectionOptions: ConnectionOptions = {
 			name: queue,
@@ -102,7 +85,7 @@ export class NatsTrigger implements INodeType {
 
 		const subscription = natsClient.subscribe(subject, {
 			queue,
-			timeout: options.sessionTimeout as number,
+			timeout: (credentials.timeout) as number,
 		});
 
 		const jsonCodec = JSONCodec<IDataObject>();

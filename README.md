@@ -18,6 +18,25 @@ You need the following installed on your development machine:
 	```
 * Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
 
+## Test
+
+Link your project to npm:
+
+```
+npm link
+```
+
+Go to the folder of the global node_modules:
+
+```
+cd /usr/local/lib/node_modules/n8n/node_modules
+```
+
+Link and run n8n:
+
+```
+npm link n8n-nodes-nats && n8n start
+```
 
 ## Using this starter
 

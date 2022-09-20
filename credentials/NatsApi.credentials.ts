@@ -19,7 +19,15 @@ export class NatsApi implements ICredentialType {
 			name: 'servers',
 			type: 'string',
 			default: '',
-			placeholder: 'demo.nats.io:4442,demo.nats.io:4222',
+			placeholder: 'nats:4442',
+		},
+		{
+			displayName: 'Timeout',
+			name: 'timeout',
+			type: 'number',
+			default: 30000,
+			description: 'The time to await a response in ms',
+			hint: 'Value in milliseconds',
 		},
 		// {
 		// 	displayName: 'SSL',
