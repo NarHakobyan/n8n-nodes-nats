@@ -239,7 +239,7 @@ export class Nats implements INodeType {
 						headers: msgHdrs,
 					});
 
-				  await	natsClient.drain();
+					await	natsClient.drain();
 					await natsClient.close();
 
 					return [this.helpers.returnJsonArray({
@@ -251,7 +251,6 @@ export class Nats implements INodeType {
 
 				const subscription = natsClient.subscribe(inbox, {
 					queue,
-					timeout: credentials.timeout,
 				});
 
 				subscription.closed.then(() => {

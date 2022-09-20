@@ -79,7 +79,6 @@ export class NatsTrigger implements INodeType {
 
 		const subscription = natsClient.subscribe(subject, {
 			queue,
-			timeout: (credentials.timeout) as number,
 		});
 
 		const jsonCodec = JSONCodec<IDataObject>();
