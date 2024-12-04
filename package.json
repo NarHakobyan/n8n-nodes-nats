@@ -6,7 +6,7 @@
     "n8n-community-node-package"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/NarHakobyan/n8n-nodes-nats",
   "author": {
     "name": "Narek Hakobyan",
     "email": "narek.hakobyan.07@gmail.com"
@@ -17,12 +17,13 @@
   },
   "main": "index.js",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "tsc && gulp build:icons",
-    "dev": "nodemon",
+    "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
-    "lint": "tslint -p tsconfig.json -c tslint.json && eslint nodes credentials package.json",
-    "lintfix": "tslint --fix -p tsconfig.json -c tslint.json && eslint nodes credentials package.json --fix",
-    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "files": [
     "dist"
@@ -38,21 +39,23 @@
     ]
   },
   "devDependencies": {
-    "@types/express": "^4.17.6",
-    "@types/request-promise-native": "~1.0.15",
-    "@typescript-eslint/parser": "~5.45",
-    "@types/uuid": "^8.3.4",
-    "eslint-plugin-n8n-nodes-base": "^1.11.0",
-    "gulp": "^4.0.2",
-    "n8n-core": "*",
+    "@types/express": "^5.0.0",
+    "@types/request-promise-native": "~1.0.21",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.0",
     "n8n-workflow": "*",
-    "nodemon": "^2.0.20",
-    "prettier": "^2.7.1",
-    "tslint": "^6.1.3",
-    "typescript": "~4.8.4"
+    "prettier": "^3.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "nats": "^2.7.1",
-    "uuid": "^8.3.2"
-  }
+    "nats": "^2.28.2",
+    "uuid": "^11.0.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab"
 }

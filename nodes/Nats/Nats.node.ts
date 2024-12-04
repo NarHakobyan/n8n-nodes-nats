@@ -1,21 +1,15 @@
 import { v4 as uuid } from 'uuid';
-import { connect, ConnectionOptions, createInbox, headers, JSONCodec, NatsConnection } from 'nats';
-
-import { IExecuteFunctions } from 'n8n-core';
+import { connect, ConnectionOptions, createInbox, headers, JSONCodec } from 'nats';
 
 import {
-	IDataObject,
+	IDataObject, IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 	JsonObject,
-	NodeApiError,
+	NodeApiError, NodeConnectionType,
 	NodeOperationError,
 } from 'n8n-workflow';
-
-function wait(ms: number) {
-	return new Promise((resolve) => setTimeout(() => resolve(null), ms));
-}
 
 export class Nats implements INodeType {
 	description: INodeTypeDescription = {
@@ -28,8 +22,8 @@ export class Nats implements INodeType {
 		defaults: {
 			name: 'Nats',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
 				name: 'natsApi',

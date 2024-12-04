@@ -1,6 +1,11 @@
-import { ITriggerFunctions } from 'n8n-core';
-
-import { IDataObject, INodeType, INodeTypeDescription, ITriggerResponse, NodeOperationError } from 'n8n-workflow';
+import {
+	IDataObject,
+	INodeType,
+	INodeTypeDescription,
+	ITriggerFunctions,
+	ITriggerResponse,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { connect, ConnectionOptions, JSONCodec } from 'nats';
 
 export class NatsTrigger implements INodeType {
