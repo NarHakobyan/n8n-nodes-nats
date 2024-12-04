@@ -1,27 +1,27 @@
 {
-  "name": "n8n-nodes-<...>",
-  "version": "0.1.0",
-  "description": "",
+  "name": "n8n-nodes-nats",
+  "version": "0.2.7",
+  "description": "n8n node for nats",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Narek Hakobyan",
+    "email": "narek.hakobyan.07@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/NarHakobyan/n8n-nodes-nats.git"
   },
   "main": "index.js",
   "scripts": {
     "build": "tsc && gulp build:icons",
-    "dev": "tsc --watch",
+    "dev": "nodemon",
     "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix",
+    "lint": "tslint -p tsconfig.json -c tslint.json && eslint nodes credentials package.json",
+    "lintfix": "tslint --fix -p tsconfig.json -c tslint.json && eslint nodes credentials package.json --fix",
     "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "files": [
@@ -30,23 +30,29 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/NatsApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/Nats/Nats.node.js",
+      "dist/nodes/Nats/NatsTrigger.node.js"
     ]
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
     "@types/request-promise-native": "~1.0.15",
     "@typescript-eslint/parser": "~5.45",
+    "@types/uuid": "^8.3.4",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "gulp": "^4.0.2",
     "n8n-core": "*",
     "n8n-workflow": "*",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
+    "tslint": "^6.1.3",
     "typescript": "~4.8.4"
+  },
+  "dependencies": {
+    "nats": "^2.7.1",
+    "uuid": "^8.3.2"
   }
 }

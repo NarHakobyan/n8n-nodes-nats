@@ -1,47 +1,54 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# n8n NATS Node
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+This is a n8n node to send and receive messages from NATS. The node is based on the [nats](https://www.npmjs.com/package/nats) package.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+## Installation
 
-## Prerequisites
+### Local
 
-You need the following installed on your development machine:
+To install the node locally, navigate to your n8n data directory and run the following command:
 
-* [git](https://git-scm.com/downloads)
-* Node.js and npm. Minimum version Node 16. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-	```
-	npm install n8n -g
-	```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+```bash
+npm install --save n8n-nodes-nats
+```
+
+### Docker
+
+To install the node using Docker, add the following line to the `services` block in your `docker-compose.yml` file:
+
+```yaml
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./n8n:/root/.n8n
+    environment:
+      N8N_CUSTOM_NODES: '["n8n-nodes-nats"]'
+```
+
+### Using the n8n UI
+
+1. Open your n8n instance in a web browser.
+2. Click on "Settings" in the left-hand navigation panel.
+3. Click on "Community nodes" in the left-hand navigation panel.
+4. Click on the "Install" button.
+5. Fill in the name of the node: "n8n-nodes-nats".
+6. Click "Install"
 
 
-## Using this starter
+## Usage
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+### Input
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-    ```
-    git clone https://github.com/<your organization>/<your-repo-name>.git
-    ```
-3. Run `npm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `npm run lint` to check for errors or `npm run lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+The input node can be configured to send messages to a NATS subject. The message can be configured to be static or to be the result of a previous node.
 
-## More information
+### Output
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+The output node can be configured to receive messages from a NATS subject. The message can be configured to be the received message or to be the result of a previous node.
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+This project is licensed under the [MIT License](
