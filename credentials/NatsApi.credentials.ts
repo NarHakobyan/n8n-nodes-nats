@@ -2,9 +2,8 @@ import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class NatsApi implements ICredentialType {
 	name = 'natsApi';
-	displayName = 'Nats API';
-	// eslint-disable-next-line n8n-nodes-base/cred-class-field-documentation-url-not-http-url
-	documentationUrl = 'nats';
+	displayName = 'NATS API';
+
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Queue',
