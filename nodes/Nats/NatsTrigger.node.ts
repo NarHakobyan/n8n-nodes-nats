@@ -64,6 +64,9 @@ export class NatsTrigger implements INodeType {
 		const connectionOptions: ConnectionOptions = {
 			name: queue,
 			servers,
+			maxReconnectAttempts: -1,
+			waitOnFirstConnect: true,
+			reconnect: true,
 		};
 
 		if (credentials.authentication === true) {
