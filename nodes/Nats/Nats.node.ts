@@ -155,6 +155,7 @@ export class Nats implements INodeType {
 		const connectionOptions: ConnectionOptions = {
 			reconnect: true,
 			timeout: credentials.timeout,
+			maxReconnectAttempts: -1,
 			waitOnFirstConnect: true,
 			servers,
 		};
@@ -265,6 +266,8 @@ export class Nats implements INodeType {
 					}
 
 					console.log(`[${subscription.getProcessed()}]: done`);
+
+					return undefined;
 				};
 
 				subscriptionsPromise.push(startListener());
