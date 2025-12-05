@@ -98,6 +98,14 @@ export class NatsTrigger implements INodeType {
 				console.log(`[${subscription.getProcessed()}]: ${dataObject}`);
 
 				this.emit([this.helpers.returnJsonArray([dataObject])]);
+
+				if (msg.reply) {
+					const replyData = {
+						success: true,
+					};
+					natsClient.publish(msg.reply, jsonCodec.encode(replyData));
+					console.log(`Replied to ${msg.reply}`);
+				}
 			}
 			console.log("subscription closed");
 		};
