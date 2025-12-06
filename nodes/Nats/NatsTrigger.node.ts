@@ -64,6 +64,9 @@ export class NatsTrigger implements INodeType {
 		const connectionOptions: ConnectionOptions = {
 			name: queue,
 			servers,
+			maxReconnectAttempts: -1,
+			waitOnFirstConnect: true,
+			reconnect: true,
 		};
 
 		if (credentials.authentication === true) {
@@ -95,6 +98,14 @@ export class NatsTrigger implements INodeType {
 				console.log(`[${subscription.getProcessed()}]: ${dataObject}`);
 
 				this.emit([this.helpers.returnJsonArray([dataObject])]);
+
+				if (msg.reply) {
+					const replyData = {
+						success: true,
+					};
+					natsClient.publish(msg.reply, jsonCodec.encode(replyData));
+					console.log(`Replied to ${msg.reply}`);
+				}
 			}
 			console.log("subscription closed");
 		};
