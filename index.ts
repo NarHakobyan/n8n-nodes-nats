@@ -1,5 +1,7 @@
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { connect, ConnectionOptions, headers, JSONCodec } from 'nats';
 import { IDataObject } from 'n8n-workflow';
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { v4 as uuid } from 'uuid';
 
 async function main() {

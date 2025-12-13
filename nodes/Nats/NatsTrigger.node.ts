@@ -6,6 +6,7 @@ import {
 	ITriggerResponse,
 	NodeOperationError,
 } from 'n8n-workflow';
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { connect, ConnectionOptions, JSONCodec } from 'nats';
 
 export class NatsTrigger implements INodeType {
@@ -47,6 +48,7 @@ export class NatsTrigger implements INodeType {
 				description: 'Queue name',
 			},
 		],
+		usableAsTool: true,
 	};
 
 	async trigger(this: ITriggerFunctions): Promise<ITriggerResponse> {
@@ -100,6 +102,7 @@ export class NatsTrigger implements INodeType {
 				this.emit([this.helpers.returnJsonArray([dataObject])]);
 
 				if (msg.reply) {
+
 					const replyData = {
 						success: true,
 					};

@@ -1,4 +1,6 @@
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { v4 as uuid } from 'uuid';
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { connect, ConnectionOptions, createInbox, headers, JSONCodec } from 'nats';
 
 import {
@@ -7,7 +9,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	JsonObject,
-	NodeApiError, NodeConnectionType,
+	NodeApiError, NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -22,8 +24,8 @@ export class Nats implements INodeType {
 		defaults: {
 			name: 'Nats',
 		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'natsApi',
@@ -128,6 +130,7 @@ export class Nats implements INodeType {
 				],
 			},
 		],
+		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -208,7 +211,7 @@ export class Nats implements INodeType {
 				if (jsonParameters) {
 					try {
 						hdrs = JSON.parse(this.getNodeParameter('headerParametersJson', i) as string);
-					} catch (exception) {
+					} catch {
 						throw new NodeOperationError(this.getNode(), 'Headers must be a valid json');
 					}
 				} else {
@@ -217,7 +220,7 @@ export class Nats implements INodeType {
 					hdrs = {};
 					if (values !== undefined) {
 						for (const value of values) {
-							//@ts-ignore
+							//@ts-expect-error error
 							headers[value.key] = value.value;
 						}
 					}
@@ -281,7 +284,7 @@ export class Nats implements INodeType {
 
 			const promisesResponses = await Promise.allSettled(subscriptionsPromise);
 
-			// @ts-ignore
+			// @ts-expect-error error
 			promisesResponses.forEach((response: JsonObject) => {
 				if (response.status !== 'fulfilled') {
 					if (!this.continueOnFail()) {

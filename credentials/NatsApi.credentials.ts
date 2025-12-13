@@ -1,8 +1,15 @@
-import { ICredentialType, INodeProperties } from 'n8n-workflow';
+import { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class NatsApi implements ICredentialType {
 	name = 'natsApi';
 	displayName = 'NATS API';
+	documentationUrl = 'https://docs.n8n.io/nodes/n8n-nodes-base.nats/';
+	test = {
+		request: {
+			url: ''
+		}
+	}
+	icon = `file:../nodes/Nats/nats.svg` as Icon;
 
 	properties: INodeProperties[] = [
 		{

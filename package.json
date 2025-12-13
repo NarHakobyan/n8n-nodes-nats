@@ -1,61 +1,56 @@
 {
-  "name": "n8n-nodes-nats",
-  "version": "0.2.8",
-  "description": "n8n node for nats",
-  "keywords": [
-    "n8n-community-node-package"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/NarHakobyan/n8n-nodes-nats",
-  "author": {
+	"name": "n8n-nodes-nats",
+	"version": "0.1.0",
+	"description": "n8n node for nats",
+	"license": "MIT",
+	"homepage": "https://github.com/NarHakobyan/n8n-nodes-nats",
+	"keywords": [
+		"n8n-community-node-package"
+	],
+	"author": {
     "name": "Narek Hakobyan",
     "email": "narek.hakobyan.07@gmail.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/NarHakobyan/n8n-nodes-nats.git"
-  },
-  "main": "index.js",
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build": "tsc && gulp build:icons",
-    "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/NatsApi.credentials.js"
-    ],
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NarHakobyan/n8n-nodes-nats.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/NatsApi.credentials.js"
+		],
     "nodes": [
       "dist/nodes/Nats/Nats.node.js",
       "dist/nodes/Nats/NatsTrigger.node.js"
     ]
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/request-promise-native": "~1.0.21",
-    "@types/uuid": "^10.0.0",
-    "@typescript-eslint/parser": "^8.17.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.3",
-    "gulp": "^5.0.0",
-    "n8n-workflow": "*",
-    "prettier": "^3.4.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
-  },
-  "dependencies": {
-    "nats": "^2.28.2",
-    "uuid": "^11.0.3"
-  },
-  "peerDependencies": {
-    "n8n-workflow": "*"
-  },
-  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "*",
+		"@types/node": "^25.0.1",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^19.0.4",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"dependencies": {
+		"nats": "^2.29.3",
+		"uuid": "^13.0.0"
+	}
 }
