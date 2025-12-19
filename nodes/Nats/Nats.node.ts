@@ -11,6 +11,7 @@ import {
 	type INodeTypeDescription,
 	type JsonObject,
 	NodeApiError,
+	LoggerProxy as Logger,
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
@@ -178,12 +179,12 @@ export class Nats implements INodeType {
 
 		try {
 			const natsClient = await connect(connectionOptions);
-			console.log(`connected to ${natsClient.getServer()}`);
+			Logger.info(`connected to ${natsClient.getServer()}`);
 
 			natsClient.closed()
 				.then((err) => {
 					if (err) {
-						console.error(
+						Logger.error(
 							`service ${queue} exited because of error: ${err}`,
 						);
 					}
@@ -254,7 +255,7 @@ export class Nats implements INodeType {
 				});
 
 				subscription.closed.then(() => {
-					console.error(
+					Logger.error(
 						`subscription ${subscription.getID()} closed`,
 					);
 				});
@@ -264,13 +265,13 @@ export class Nats implements INodeType {
 						const dataObject: IDataObject = {};
 						dataObject.data = jsonCodec.decode(msg.data);
 
-						console.log(`[${subscription.getProcessed()}]: ${JSON.stringify(dataObject)}`);
+						Logger.info(`[${subscription.getProcessed()}]: ${JSON.stringify(dataObject)}`);
 
 						subscription.unsubscribe();
 						return dataObject;
 					}
 
-					console.log(`[${subscription.getProcessed()}]: done`);
+					Logger.info(`[${subscription.getProcessed()}]: done`);
 
 					return undefined;
 				};
@@ -286,8 +287,7 @@ export class Nats implements INodeType {
 
 			const promisesResponses = await Promise.allSettled(subscriptionsPromise);
 
-			// @ts-expect-error error
-			promisesResponses.forEach((response: JsonObject) => {
+			for (const response of promisesResponses) {
 				if (response.status !== 'fulfilled') {
 					if (!this.continueOnFail()) {
 						throw new NodeApiError(this.getNode(), response);
@@ -298,7 +298,7 @@ export class Nats implements INodeType {
 								error: response.reason,
 							},
 						});
-						return;
+						continue;
 					}
 				}
 
@@ -307,7 +307,7 @@ export class Nats implements INodeType {
 						success: response.value,
 					},
 				});
-			});
+			}
 
 			await natsClient.close();
 

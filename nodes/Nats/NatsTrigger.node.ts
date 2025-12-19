@@ -1,9 +1,10 @@
 import {
-	IDataObject,
-	INodeType,
-	INodeTypeDescription,
-	ITriggerFunctions,
-	ITriggerResponse,
+	type IDataObject,
+	type INodeType,
+	type INodeTypeDescription,
+	type ITriggerFunctions,
+	type ITriggerResponse,
+	LoggerProxy as Logger,
 	NodeOperationError,
 } from 'n8n-workflow';
 // eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
@@ -97,7 +98,7 @@ export class NatsTrigger implements INodeType {
 			for await (const msg of subscription) {
 				 const dataObject = jsonCodec.decode(msg.data);
 
-				console.log(`[${subscription.getProcessed()}]: ${dataObject}`);
+				Logger.info(`[${subscription.getProcessed()}]: ${dataObject}`);
 
 				this.emit([this.helpers.returnJsonArray([dataObject])]);
 
@@ -107,10 +108,10 @@ export class NatsTrigger implements INodeType {
 						success: true,
 					};
 					natsClient.publish(msg.reply, jsonCodec.encode(replyData));
-					console.log(`Replied to ${msg.reply}`);
+					Logger.info(`Replied to ${msg.reply}`);
 				}
 			}
-			console.log("subscription closed");
+			Logger.info("subscription closed");
 		};
 
 		startListener();
