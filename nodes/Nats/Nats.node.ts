@@ -4,12 +4,14 @@ import { v4 as uuid } from 'uuid';
 import { connect, ConnectionOptions, createInbox, headers, JSONCodec } from 'nats';
 
 import {
-	IDataObject, IExecuteFunctions,
-	INodeExecutionData,
-	INodeType,
-	INodeTypeDescription,
-	JsonObject,
-	NodeApiError, NodeConnectionTypes,
+	type IDataObject,
+	type IExecuteFunctions,
+	type INodeExecutionData,
+	type INodeType,
+	type INodeTypeDescription,
+	type JsonObject,
+	NodeApiError,
+	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -232,12 +234,12 @@ export class Nats implements INodeType {
 					}
 				}
 
-				if(options.onlyEmit) {
+				if (options.onlyEmit) {
 					natsClient.publish(subject, jsonCodec.encode(message), {
 						headers: msgHdrs,
 					});
 
-					await	natsClient.drain();
+					await natsClient.drain();
 					await natsClient.close();
 
 					return [this.helpers.returnJsonArray({
@@ -252,9 +254,9 @@ export class Nats implements INodeType {
 				});
 
 				subscription.closed.then(() => {
-						console.error(
-							`subscription ${subscription.getID()} closed`,
-						);
+					console.error(
+						`subscription ${subscription.getID()} closed`,
+					);
 				});
 
 				const startListener = async () => {
