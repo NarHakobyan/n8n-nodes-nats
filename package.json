@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-nats",
-	"version": "0.3.0",
+	"version": "0.2.7",
 	"description": "n8n node for nats",
 	"license": "MIT",
 	"homepage": "https://github.com/NarHakobyan/n8n-nodes-nats",

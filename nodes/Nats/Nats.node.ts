@@ -9,11 +9,11 @@ import {
 	type INodeExecutionData,
 	type INodeType,
 	type INodeTypeDescription,
-	type JsonObject,
 	NodeApiError,
 	LoggerProxy as Logger,
 	NodeConnectionTypes,
 	NodeOperationError,
+	type JsonObject,
 } from 'n8n-workflow';
 
 export class Nats implements INodeType {
@@ -290,7 +290,7 @@ export class Nats implements INodeType {
 			for (const response of promisesResponses) {
 				if (response.status !== 'fulfilled') {
 					if (!this.continueOnFail()) {
-						throw new NodeApiError(this.getNode(), response);
+						throw new NodeApiError(this.getNode(), response as unknown as JsonObject);
 					} else {
 						// Return the actual reason as error
 						responseData.push({

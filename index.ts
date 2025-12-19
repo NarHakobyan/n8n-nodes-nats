@@ -1,6 +1,6 @@
 // eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
-import { connect, ConnectionOptions, headers, JSONCodec } from 'nats';
-import { IDataObject } from 'n8n-workflow';
+import { connect, type ConnectionOptions, headers, JSONCodec } from 'nats';
+import { type IDataObject, LoggerProxy as Logger } from 'n8n-workflow';
 // eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { v4 as uuid } from 'uuid';
 
@@ -17,7 +17,7 @@ async function main() {
 
 	const natsClient = await connect(connectionOptions);
 
-	console.log(`connected to ${natsClient.getServer()}`);
+	Logger.info(`connected to ${natsClient.getServer()}`);
 
 	const message: IDataObject = {
 		id: uuid(),
@@ -30,7 +30,7 @@ async function main() {
 	natsClient.closed()
 		.then((err) => {
 			if (err) {
-				console.error(
+				Logger.error(
 					`service ${queue} exited because of error: ${err}`,
 				);
 			}
